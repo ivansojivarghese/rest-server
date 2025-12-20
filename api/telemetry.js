@@ -4,6 +4,8 @@ export const config = {
 
 import { neon } from '@neondatabase/serverless';
 
+console.log('DATABASE_URL exists:', !!process.env.DATABASE_URL);
+
 const sql = neon(process.env.DATABASE_URL);
 
 export default async function handler(req, res) {
