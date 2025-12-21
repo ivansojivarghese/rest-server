@@ -104,7 +104,7 @@ export default async function handler(req, res) {
     const { user, batch } = req.body || {};
 
     if (!Array.isArray(batch) || batch.length === 0) {
-      return res.status(400).json({ error: 'Invalid telemetry batch' });
+      return res.status(200).json({ status: 'ok', received: 0 });
     }
 
     for (const event of batch) {
@@ -121,7 +121,7 @@ export default async function handler(req, res) {
           ${event.sessionId ?? 'unknown'},
           ${event.success ?? null},
           ${event.timeToPlay ?? null},
-          ${event}
+          ${sql.json(event)}
         )
       `;
     }
