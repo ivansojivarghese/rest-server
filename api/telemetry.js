@@ -1,3 +1,5 @@
+
+/*
 export const config = {
   runtime: 'nodejs',
 };
@@ -46,4 +48,14 @@ export default async function handler(req, res) {
     console.error('Telemetry insert failed:', error);
     return res.status(500).json({ error: 'Database error' });
   }
+}
+*/
+
+export default async function handler(req, res) {
+  return res.status(200).json({
+    ok: true,
+    method: req.method,
+    body: req.body ?? null,
+    envExists: !!process.env.DATABASE_URL
+  });
 }
