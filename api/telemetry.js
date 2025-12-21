@@ -51,11 +51,23 @@ export default async function handler(req, res) {
 }
 */
 
+import { neon } from '@neondatabase/serverless';
+
 export default async function handler(req, res) {
-  return res.status(200).json({
-    ok: true,
-    method: req.method,
-    body: req.body ?? null,
-    envExists: !!process.env.DATABASE_URL
-  });
+  try {
+    const sql = neon(process.env.DATABASE_URL);
+
+    const result = await sql`SELECT now() as time`;
+
+    return res.status(200).json({
+      db: 'connected',
+      time: result[0].time
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      error: err.message
+    });
+  }
 }
+
