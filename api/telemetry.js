@@ -50,7 +50,7 @@ export default async function handler(req, res) {
   }
 }
 */
-
+/*
 export default async function handler(req, res) {
   try {
     const sql = neon(process.env.DATABASE_URL);
@@ -68,4 +68,70 @@ export default async function handler(req, res) {
     });
   }
 }
+*/
+/*
+import postgres from 'postgres';
 
+const sql = postgres(process.env.DATABASE_URL, {
+  ssl: 'require'
+});
+
+export default async function handler(req, res) {
+  try {
+    const result = await sql`SELECT 1 as ok`;
+    return res.status(200).json({ ok: result[0].ok });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      error: err.message
+    });
+  }
+}
+*/
+
+import postgres from 'postgres';
+
+const sql = postgres(process.env.DATABASE_URL, {
+  ssl: 'require'
+});
+
+export default async function handler(req, res) {
+  try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const { user, batch } = req.body || {};
+
+    if (!Array.isArray(batch) || batch.length === 0) {
+      return res.status(400).json({ error: 'Invalid telemetry batch' });
+    }
+
+    for (const event of batch) {
+      await sql`
+        INSERT INTO telemetry (
+          user_id,
+          session_id,
+          success,
+          time_to_play,
+          data
+        )
+        VALUES (
+          ${user ?? 'anonymous'},
+          ${event.sessionId ?? 'unknown'},
+          ${event.success ?? null},
+          ${event.timeToPlay ?? null},
+          ${event}
+        )
+      `;
+    }
+
+    return res.status(200).json({
+      status: 'ok',
+      received: batch.length
+    });
+  } catch (err) {
+    console.error('Telemetry insert failed:', err);
+    return res.status(500).json({ error: err.message });
+  }
+}

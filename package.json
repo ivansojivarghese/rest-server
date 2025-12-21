@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/ivansojivarghese/rest-server/issues"
   },
-  "homepage": "https://github.com/ivansojivarghese/rest-server#readme"
+  "homepage": "https://github.com/ivansojivarghese/rest-server#readme",
+  "dependencies": {
+    "postgres": "^3.4.7"
+  }
 }
