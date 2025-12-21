@@ -130,7 +130,7 @@ export default async function handler(req, res) {
           ${user ?? 'anonymous'},
           ${event.sessionId ?? 'unknown'},
           ${event.success ?? null},
-          ${event.timeToPlay ?? null},
+          ${event.timeToPlay != null ? Math.round(event.timeToPlay) : null},
           ${sql.json(event)}
         )
       `;
